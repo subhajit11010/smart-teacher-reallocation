@@ -33,7 +33,7 @@ function searchSchool() {
     }
 
     // Fetch the key from backend
-    fetch('http://127.0.0.1:5000/get-opencage-key')
+    fetch('https://smart-teacher-backend-c4n6.onrender.com/get-opencage-key')
         .then(response => response.json())
         .then(data => {
             let apiKey = data.key;
@@ -397,7 +397,7 @@ function editSchool(button) {
 
 document.getElementById("top-right-div").addEventListener("click", function () {
     let schools = JSON.parse(localStorage.getItem("schools")) || [];
-    fetch("http://127.0.0.1:5000/allocate", {
+    fetch("https://smart-teacher-backend-c4n6.onrender.com/allocate", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
