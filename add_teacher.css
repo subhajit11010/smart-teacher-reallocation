@@ -31,7 +31,7 @@ input {
     width: 100%;
     padding: 8px;
     margin-top: 5px;
-    /* margin-right: 5px; */
+    
     font-size: 1rem;
 }
 
@@ -56,7 +56,6 @@ input {
     padding-bottom: 0.5rem;
 }
 
-/* Each field container should take full width on small screens */
 .teacher_name_container,
 .teacher_subj_container,
 .teacher_quali_container,
@@ -68,7 +67,6 @@ input {
     margin-right: 1rem;
 }
 
-/* --- Responsive Design for Mobile Screens --- */
 @media (max-width: 768px) {
     #teacher-heading {
         font-size: 1.5rem;
@@ -89,13 +87,12 @@ input {
         flex: 1 1 45%;
         min-width: 250px;
         margin-bottom: 1rem;
-        /* Add vertical spacing */
+        
         padding-right: 0.5rem;
-        /* Optional: add spacing between columns */
+        
         box-sizing: border-box;
-        /* Ensures padding doesn't overflow */
+        
     }
-
 
     input {
         font-size: 1rem;

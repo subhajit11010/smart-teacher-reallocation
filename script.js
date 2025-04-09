@@ -1,6 +1,4 @@
 import { v4 as uuidv4 } from 'https://cdn.skypack.dev/uuid';
-// let uuids = array.map(() => uuidv4().substring(0, 7));
-// console.log(uuids);// Take the first 7 characters
 
 // Initialize the map
 let map = L.map('map').setView([22.5726, 88.3639], 6); // Default view (West Bengal)
@@ -79,10 +77,10 @@ const totalSteps = 13;
 
 document.querySelector(".next").addEventListener("click", function () {
     let active_classes = document.getElementsByClassName("active");
-    Array.from(active_classes).forEach(cls => {  // Convert HTMLCollection to an array
+    Array.from(active_classes).forEach(cls => {
         if (cls && cls.id.includes("step")) {
             let step = cls.id.split("-")[1];
-            nextStep(parseInt(step));  // Convert step to integer
+            nextStep(parseInt(step));
             // console.log(parseInt(step), currentStep)
         }
     });
