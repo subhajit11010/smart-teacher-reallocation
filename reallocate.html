@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reallocation</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="/frontend/lib/leaflet.polylineDecorator.js"></script>
+    <style>
+        #suggestionsOutput {
+            padding: 20px;
+            font-size: 16px;
+        }
+
+        #suggestionsOutput h3 {
+            color: #2b3d52;
+            margin-bottom: 10px;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f9fbfd;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #mapSection {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .map-title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            animation: fadeInDown 1s ease;
+        }
+
+        .map-subtitle {
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 10px;
+            animation: fadeIn 1.5s ease;
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s ease;
+            margin-top: 10px;
+        }
+
+        #toggleMapBtn {
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background 0.3s;
+        }
+
+        #toggleMapBtn:hover {
+            background-color: #005fa3;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="suggestionsOutput"></div>
+    <div id="mapSection">
+        <div class="map-title">🗺️ MAP</div>
+        <div class="map-subtitle">Visualizing Teacher Reallocation Paths</div>
+        <button id="toggleMapBtn">Hide Map</button>
+        <div id="map"></div>
+    </div>
+
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            // ✅ Initialize the map
+            const map = L.map("map").setView([23.5, 87.3], 7);
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                attribution: "© OpenStreetMap contributors",
+            }).addTo(map);
+
+            // ✅ Get data from localStorage
+            const suggestions = JSON.parse(localStorage.getItem("suggestions")) || {};
+            const outputDiv = document.getElementById("suggestionsOutput");
+            outputDiv.innerHTML = "";
+
+            if (!suggestions || Object.keys(suggestions).length === 0) {
+                outputDiv.textContent = "No suggestions available.";
+                return;
+            }
+
+            for (const subject in suggestions) {
+                const subjectHeader = document.createElement("h3");
+                subjectHeader.textContent = `📘 Subject: ${subject}`;
+                outputDiv.appendChild(subjectHeader);
+
+                suggestions[subject].forEach(line => {
+                    const suggestionCard = document.createElement("div");
+                    suggestionCard.style.border = "1px solid #ccc";
+                    suggestionCard.style.borderRadius = "6px";
+                    suggestionCard.style.padding = "10px";
+                    suggestionCard.style.marginBottom = "8px";
+                    suggestionCard.style.backgroundColor = "#f0f8ff";
+                    suggestionCard.style.boxShadow = "0px 2px 5px rgba(0, 0, 0, 0.05)";
+                    suggestionCard.style.fontFamily = "Arial, sans-serif";
+                    suggestionCard.style.display = "flex";
+                    suggestionCard.style.alignItems = "center";
+                    suggestionCard.style.gap = "10px";
+
+                    const arrow = document.createElement("span");
+                    arrow.textContent = "➡️";
+                    arrow.style.fontSize = "18px";
+
+                    const formattedText = document.createElement("span");
+
+                    // Beautify line using regex (extract names and simplify)
+                    const match = line.match(/Teacher\s+(.+?)\s+will\s+be\s+allocated\s+to\s+(.+?)\s+from\s+(.+?)\s+having/i);
+                    if (match) {
+                        const teacherName = match[1].trim();
+                        const toSchool = match[2].trim();
+                        const fromSchool = match[3].trim();
+                        formattedText.innerHTML = `
+                🧑‍🏫 <b>${teacherName}</b> <span style="color:#444;">(Reallocation)</span><br>
+                <b>${fromSchool}</b> <span style="color: green;">➜</span> <b>${toSchool}</b>
+            `;
+                    } else {
+                        // fallback if regex doesn't match
+                        formattedText.textContent = line;
+                    }
+
+                    suggestionCard.appendChild(arrow);
+                    suggestionCard.appendChild(formattedText);
+                    outputDiv.appendChild(suggestionCard);
+                });
+            }
+
+            console.log(suggestions)
+            const schools = JSON.parse(localStorage.getItem("schools")) || [];
+
+            const schoolMap = {};
+
+            // ✅ Build a map of school name to coordinates
+            schools.forEach((school) => {
+                const name = school.sch_name.trim();
+                if (school.location) {
+                    const match = school.location.match(
+                        /Lat:\s*([-+]?[0-9]*\.?[0-9]+),\s*Long:\s*([-+]?[0-9]*\.?[0-9]+)/
+                    );
+                    if (match) {
+                        const lat = parseFloat(match[1]);
+                        const lng = parseFloat(match[2]);
+                        schoolMap[name] = { lat, lng };
+
+                        // ✅ Add marker for each school
+                        L.marker([lat, lng])
+                            .addTo(map)
+                            .bindPopup(`<b>${name}</b>`);
+                    } else {
+                        console.warn(`Invalid location format for ${name}:`, school.location);
+                    }
+                }
+            });
+            function teacher_number_checker_per_subj(subject, toName, fromName) {
+                let teacherCount = 0;
+                const regexPattern = new RegExp(`Teacher\\s+.+?\\s+will be allocated to\\s+${toName}\\s+from\\s+${fromName}\\s+having`, 'i');
+
+                suggestions[subject].forEach((text) => {
+                    const teacherMatch = text.match(regexPattern);
+                    if (teacherMatch) {
+                        teacherCount++;
+                    }
+                });
+                return teacherCount;
+            }
+
+            // ✅ Draw arrows for each suggestion
+            for (const subject in suggestions) {
+                suggestions[subject].forEach((text) => {
+                    const regex = /to (.+?) from (.+?) having/i;
+                    const match = text.match(regex);
+
+                    if (match) {
+                        const toName = match[1].trim();
+                        const fromName = match[2].trim();
+
+                        const from = schoolMap[fromName];
+                        const to = schoolMap[toName];
+
+                        if (from && to) {
+                            const line = L.polyline(
+                                [
+                                    [from.lat, from.lng],
+                                    [to.lat, to.lng],
+                                ],
+                                {
+                                    color: "blue",
+                                    weight: 3,
+                                }
+                            ).addTo(map);
+
+                            // ✅ Use regex to confirm it's a valid teacher allocation sentence
+                            const teacherCount = teacher_number_checker_per_subj(subject, toName, fromName);
+
+                            // ✅ Tooltip for teacher count
+                            line.bindTooltip(`${teacherCount} teacher(s) reallocated`, {
+                                permanent: false,
+                                direction: "top",
+                                sticky: true
+                            });
+
+                            // ✅ Decorate with an arrow
+                            let offset = 0;
+
+                            const createPattern = () => [
+                                {
+                                    offset: `${offset}%`,
+                                    repeat: 50,
+                                    symbol: L.Symbol.arrowHead({
+                                        pixelSize: 10,
+                                        polygon: true,
+                                        pathOptions: { stroke: true, color: "blue" }
+                                    })
+                                }
+                            ];
+
+                            const decorator = L.polylineDecorator(line, {
+                                patterns: createPattern()
+                            }).addTo(map);
+
+                            setInterval(() => {
+                                offset = (offset + 2) % 100;
+                                decorator.setPatterns(createPattern());
+                            }, 100);
+                        } else {
+                            console.warn("Missing coordinates for:", fromName, "or", toName);
+                        }
+                    }
+                });
+            }
+        });
+
+        const toggleBtn = document.getElementById("toggleMapBtn");
+        const mapDiv = document.getElementById("map");
+
+        toggleBtn.addEventListener("click", () => {
+            if (mapDiv.style.display === "none") {
+                mapDiv.style.display = "block";
+                toggleBtn.textContent = "Hide Map";
+            } else {
+                mapDiv.style.display = "none";
+                toggleBtn.textContent = "Show Map";
+            }
+        });
+    </script>
+</body>
+
+</html>

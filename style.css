@@ -1,0 +1,255 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-image: linear-gradient(to bottom right, rgb(0, 0, 0), rgb(155, 137, 243));
+}
+
+h1 {
+    text-align: center;
+}
+
+.container {
+    width: 60%;
+    margin: auto;
+}
+
+.form-group {
+    margin-bottom: 10px;
+    overflow-x: hidden;
+}
+
+label {
+    color: white;
+    display: block;
+    font-weight: bold;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 10px;
+}
+
+
+#schoolType {
+    width: 100%;
+}
+
+button {
+    padding: 10px 15px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+.delete-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background-color: blue;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.form-group {
+    display: none;
+}
+
+/* Hide all inputs except the first one */
+.form-group.active {
+    display: block;
+}
+
+/* Show only active input */
+.nav-buttons {
+    margin-top: 10px;
+}
+
+#navigator-con {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+}
+
+.navigator {
+    width: 100px;
+    color: white;
+    font-size: large;
+    font-weight: bold;
+}
+
+.prev {
+    background-color: red;
+    border-radius: 5px;
+    text-align: center;
+    align-content: center;
+}
+
+.next {
+    background-color: rgb(6, 225, 6);
+    border-radius: 5px;
+}
+
+.school-category-con {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid black;
+}
+
+#school_category1,
+#school_category2,
+#school_category3,
+#school_category4 {
+    margin: 4px 0 0;
+    line-height: normal;
+    width: 20px;
+    height: 20px;
+    margin-left: 1rem;
+}
+
+.sch_teac_cat {
+    display: none;
+}
+
+.sch_enroll_students {
+    display: none;
+}
+
+.teacher-btn{
+    background-color: rgb(9, 124, 21);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#top-right-div {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #4b6cb7, #182848);
+    /* gradient blue */
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+#top-right-div:hover {
+    background: linear-gradient(135deg, #5f82d6, #233a67);
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+#top-right-div:active {
+    transform: scale(0.98);
+}
+
+
+.map-label {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.animated-text {
+    display: inline-block;
+    background: linear-gradient(to right, #f39c12, #e74c3c, #8e44ad);
+    background-clip: text;
+
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 2s infinite;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200px 0;
+    }
+
+    100% {
+        background-position: 200px 0;
+    }
+}
+
+/* Smaller map size */
+#map {
+    height: 250px;
+    width: 100%;
+    border: 2px solid white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Welcome animation */
+h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: white;
+    animation: fadeInScale 1s ease-in-out forwards;
+    margin-bottom: 30px;
+}
+
+@keyframes fadeInScale {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Buttons hover */
+button:hover {
+    transform: scale(1.05);
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+#schoolTable {
+    color: white;
+    background-color: black;
+}
+
+thead {
+    color: black;
+}

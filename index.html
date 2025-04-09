@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Management</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+
+
+    <h1>Teacher Allocation System</h1>
+    <div class="container">
+        <form id="schoolForm">
+            <!-- Always Visible Fields -->
+            <div class="form-group active">
+                <label>School Name:</label>
+                <input type="text" id="schoolName" required>
+            </div>
+            <div class="form-group active">
+                <label>School Type:</label>
+                <select id="schoolType">
+                    <option value="Boys">Boys</option>
+                    <option value="Girls">Girls</option>
+                    <option value="Co-Ed">Co-Ed</option>
+                </select>
+            </div>
+            <div class="map-label">
+                <h2 class="map-heading">🗺️ <span class="animated-text">Interactive School Map</span> 🧭</h2>
+            </div>
+            <div class="form-group active">
+                <label>Location:</label>
+                <input type="text" id="schoolSearch" placeholder="Search for a school..." />
+                <div id="map"></div>
+                <input type="text" id="schoolLocation" readonly placeholder="Location (Lat, Long)">
+            </div>
+
+            <!-- Sliding Fields Start from Here -->
+            <div class="form-group active" id="step-1">
+                <label>Number of male teachers in school:</label>
+                <input type="number" id="male">
+            </div>
+            <div class="form-group" id="step-2">
+                <label>Number of female teachers in school:</label>
+                <input type="number" id="female">
+            </div>
+            <div class="form-group" id="step-3">
+                <label>Number of regular teachers in the school:</label>
+                <input type="number" id="regular">
+            </div>
+            <div class="form-group" id="step-4">
+                <label>Number of contract teachers in the school:</label>
+                <input type="number" id="contract">
+            </div>
+            <div class="form-group" id="step-5">
+                <label>Number of part-time teachers in the school:</label>
+                <input type="number" id="part_time">
+            </div>
+            <div class="form-group" id="step-6">
+                <label>Number of teachers trained in computer applications:</label>
+                <input type="number" id="total_teacher_trained_computer">
+            </div>
+            <div class="form-group" id="step-7">
+                <label>In which category does the school fall? (can choose multiple)</label><br>
+                <div class="school-category-con">
+                    <label for="school_category1">Primary</label>
+                    <input type="checkbox" name="school_category" value="Primary" id="school_category1">
+                </div>
+                <br />
+                <div class="school-category-con">
+                    <label for="school_category2">Upper Primary</label>
+                    <input type="checkbox" name="school_category" value="Upper Primary" id="school_category2">
+                </div>
+                <br />
+                <div class="school-category-con">
+                    <label for="school_category3">Secondary</label>
+                    <input type="checkbox" name="school_category" value="Secondary" id="school_category3">
+                </div>
+                <br />
+                <div class="school-category-con">
+                    <label for="school_category4">Higher Secondary</label>
+                    <input type="checkbox" name="school_category" value="Higher Secondary" id="school_category4">
+                </div>
+            </div>
+
+            <div class="form-group" id="step-8">
+                <div class="sch_teac_cat pr">
+                    <label for="sch_teac_pr">Number of Primary School Teachers: </label>
+                    <input type="number" id="sch_teac_pr">
+                </div>
+                <div class="sch_teac_cat upr">
+                    <label for="sch_teac_upr">Number of Upper Primary School Teachers: </label>
+                    <input type="number" id="sch_teac_upr">
+                </div>
+                <div class="sch_teac_cat pr upr">
+                    <label for="sch_teac_pr_upr">Number of Teachers who teach both Primary and Upper Primary levels:
+                    </label>
+                    <input type="number" id="sch_teac_pr_upr">
+                </div>
+                <div class="sch_teac_cat sec">
+                    <label for="sch_teac_sec">Number of Teachers who teach Secondary level only: </label>
+                    <input type="number" id="sch_teac_sec">
+                </div>
+                <div class="sch_teac_cat hsec">
+                    <label for="sch_teac_hsec">Number of Teachers who teach Higher Secondary level only: </label>
+                    <input type="number" id="sch_teac_hsec">
+                </div>
+                <div class="sch_teac_cat upr sec">
+                    <label for="sch_teac_upr_sec">Number of Teachers who teach both Upper Primary and Secondary levels:
+                    </label>
+                    <input type="number" id="sch_teac_upr_sec">
+                </div>
+                <div class="sch_teac_cat sec hsec">
+                    <label for="sch_teac_sec_hsec">Number of Teachers who teach both Secondary and Higher Secondary
+                        levels: </label>
+                    <input type="number" id="sch_teac_sec_hsec">
+                </div>
+            </div>
+            <div class="form-group" id="step-9">
+                <label for="teacher_involve_non_training_assignment">Number of teachers having non-training assignments
+                </label>
+                <input type="number" id="teacher_involve_non_training_assignment">
+            </div>
+            <div class="form-group" id="step-10">
+                <label for="standard_PTR">Standard Pupil to Teacher Ratio of the school</label>
+                <input type="number" id="standard_PTR" readonly>
+            </div>
+
+            <div class="form-group" id="step-11">
+                <div class="sch_enroll_students pr">
+                    <label for="sch_enroll_pr">Number of students currently enrolled in <b>primary level</b>: </label>
+                    <input type="number" class="sch_enroll" id="sch_enroll_pr">
+                </div>
+                <div class="sch_enroll_students upr">
+                    <label for="sch_enroll_upr">Number of students currently enrolled in <b>upper primary level</b>:
+                    </label>
+                    <input type="number" class="sch_enroll" id="sch_enroll_upr">
+                </div>
+                <div class="sch_enroll_students sec">
+                    <label for="sch_enroll_sec">Number of students currently enrolled in <b>secondary level</b>:
+                    </label>
+                    <input type="number" class="sch_enroll" id="sch_enroll_sec">
+                </div>
+                <div class="sch_enroll_students hsec">
+                    <label for="sch_enroll_hsec">Number of students currently enrolled in <b>higher secondary level</b>:
+                    </label>
+                    <input type="number" class="sch_enroll" id="sch_enroll_hsec">
+                </div>
+            </div>
+            <div class="form-group" id="step-12">
+                <label for="total_students">Total number of students currently enrolled in the school: </label>
+                <input type="number" id="total_students" readonly>
+            </div>
+            <div class="form-group" id="step-13">
+                <label for="actual_PTR">Actual Pupil to Teacher Ratio of the school</label>
+                <input type="number" id="actual_PTR" readonly>
+            </div>
+
+            <div class="nav-buttons">
+                <div id="navigator-con">
+                    <button type="button" class="navigator prev">Previous</button>
+                    <button type="button" class="navigator next">Next</button>
+                </div>
+
+                <button type="submit" style="display: none;" id="submitBtn">Submit</button>
+            </div>
+        </form>
+
+        <table id="schoolTable">
+            <thead>
+                <tr>
+                    <th>School Name</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- School data will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <button id="top-right-div">
+        Reallocate Teachers
+    </button>
+
+    <script src="script.js" type="module"></script>
+</body>
+
+</html>

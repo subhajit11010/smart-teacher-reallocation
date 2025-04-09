@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit School</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { text-align: center; }
+        .container { width: 50%; margin: auto; }
+        .form-group { margin-bottom: 10px; }
+        label { display: block; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; margin-top: 5px; }
+        button { padding: 10px 15px; margin-top: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h1>Edit School Details</h1>
+    <div class="container">
+        <form id="editForm">
+            <div class="form-group">
+                <label>School Name:</label>
+                <input type="text" id="editSchoolName" required>
+            </div>
+            <div class="form-group">
+                <label>School Type:</label>
+                <select id="editSchoolType">
+                    <option value="Boys">Boys</option>
+                    <option value="Girls">Girls</option>
+                    <option value="Co-Ed">Co-Ed</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Location:</label>
+                <input type="text" id="editSchoolLocation" required>
+            </div>
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+
+    <script src="edit.js" type="module"></script>
+    
+
+</body>
+</html>

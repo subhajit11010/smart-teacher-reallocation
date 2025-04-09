@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Teachers</title>
+    <link href="add_teacher.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="container">
+        <h2 id="teacher-heading">Add Teacher for School</h2>
+        <form id="teachers-info-con"></form>
+        <div id="submitted-teachers" style="margin-top: 30px;">
+            <h3>Submitted Teachers</h3>
+            <div id="teacher-list"></div>
+        </div>
+    </div>
+    <div id="top-right-div">
+        Filled: 0
+    </div>
+    <script>
+        let sch_name;
+        let filled = 0;
+        document.addEventListener('DOMContentLoaded', function () {
+            sch_name = extract_parameters();
+            console.log(sch_name);
+
+            if (sch_name) {
+                document.getElementById('teacher-heading').innerHTML = `Add Teacher for <i style="color: green">${sch_name}</i>`;
+            }
+
+            const schools = JSON.parse(localStorage.getItem("schools")) || [];
+            const index = schools.findIndex(s => s.sch_name === sch_name);
+
+            if (index !== -1 && schools[index].teachers && schools[index].teachers.length > 0) {
+                // ✅ Already submitted — hide form, show details
+                document.getElementById("teachers-info-con").style.display = "none";
+                document.getElementById('teacher-heading').innerHTML = `Teacher details of <i style="color: green">${sch_name}</i>`;
+                show_teacher_details(schools[index]);
+            } else {
+                // ❌ Not submitted yet — show form
+                show_input_fields(sch_name);
+            }
+        });
+
+        function show_teacher_details(school) {
+            const listDiv = document.getElementById("teacher-list");
+            listDiv.innerHTML = "";
+
+            school.teachers.forEach((name, i) => {
+                const card = document.createElement("div");
+                card.style.border = "1px solid #ccc";
+                card.style.marginBottom = "10px";
+                card.style.padding = "10px";
+                card.style.borderRadius = "5px";
+                card.style.backgroundColor = "#f9f9f9";
+                card.style.boxShadow = "0px 2px 6px rgba(0, 0, 0, 0.1)";
+                card.innerHTML = `
+            <strong>Name:</strong> ${name}<br>
+            <strong>Subject:</strong> ${school.subjects_taught[i]}<br>
+            <strong>Qualification:</strong> ${school.qualifications[i]}<br>
+            <strong>Willingness:</strong> ${school.willinness_to_reallocate[i]}<br>
+            <strong>Gender:</strong> ${school.gender[i]}<br>
+            <strong>Age:</strong> ${school.age[i]}
+        `;
+                listDiv.appendChild(card);
+            });
+
+            document.getElementById("submitted-teachers").scrollIntoView({ behavior: "smooth" });
+        }
+
+        function extract_parameters() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('sch_name') || 'Default School';
+        }
+
+        function show_input_fields(sch_name) {
+            let schools = JSON.parse(localStorage.getItem("schools")) || [];
+            let index = schools.findIndex(s => s.sch_name === sch_name);
+            let total_teachers = 0;
+
+            if (index !== -1) {
+                total_teachers = schools[index].total_teacher || 0;
+            }
+
+            let teachers_info_container = document.getElementById("teachers-info-con");
+            let teacher_count = 1;
+
+            filled = 0;
+            document.getElementById("top-right-div").textContent = `Filled: ${filled}`;
+
+            for (let i = 0; i < total_teachers; i++) {
+                let teacher_indiv_info = document.createElement("div");
+                teacher_indiv_info.classList.add("teacher_indiv_info");
+
+                let teacher_name_container = document.createElement("div");
+                let teacher_subj_container = document.createElement("div");
+                let teacher_quali_container = document.createElement("div");
+                let teacher_will_container = document.createElement("div");
+                let teacher_gender_container = document.createElement("div");
+                let teacher_age_container = document.createElement("div");
+                teacher_name_container.classList.add("teacher_name_container");
+                teacher_subj_container.classList.add("teacher_subj_container");
+                teacher_quali_container.classList.add("teacher_quali_container");
+                teacher_will_container.classList.add("teacher_will_container");
+                teacher_gender_container.classList.add("teacher_gender_container");
+                teacher_age_container.classList.add("teacher_age_container");
+
+                let label = document.createElement("label");
+                label.textContent = `Enter Teacher/Teaching Staff name`;
+                label.classList.add("name-label");
+                label.htmlFor = `teacher-name-${teacher_count}`;
+
+                let subj_label = document.createElement("label");
+                subj_label.textContent = `Enter Teacher's subject: (Full subject name)`;
+                subj_label.classList.add("subj-label");
+                subj_label.htmlFor = `teacher-subj-${teacher_count}`;
+
+                let quali_label = document.createElement("label");
+                quali_label.textContent = `Enter Teacher's qualification: (Short Forms of Degrees)`;
+                quali_label.classList.add("quali-label");
+                quali_label.htmlFor = `teacher-quali-${teacher_count}`;
+
+                let will_label = document.createElement("label");
+                will_label.textContent = `Enter Teacher's willingness to reallocate: (Yes/No)`;
+                will_label.classList.add("will-label");
+                will_label.htmlFor = `teacher-will-${teacher_count}`;
+
+                let gender_label = document.createElement("label");
+                gender_label.textContent = `Enter Teacher's gender: (Male/Female)`;
+                gender_label.classList.add("gender-label");
+                gender_label.htmlFor = `teacher-gender-${teacher_count}`;
+
+                let age_label = document.createElement("label");
+                age_label.textContent = `Enter Teacher's age: (Integer)`;
+                age_label.classList.add("age-label");
+                age_label.htmlFor = `teacher-age-${teacher_count}`;
+
+                let input = document.createElement("input");
+                input.classList.add("name-input");
+                input.id = `teacher-name-${teacher_count}`;
+
+                let subj_input = document.createElement("input");
+                subj_input.classList.add("subj-input");
+                subj_input.id = `teacher-subj-${teacher_count}`;
+
+                let quali_input = document.createElement("input");
+                quali_input.classList.add("quali-input");
+                quali_input.id = `teacher-quali-${teacher_count}`;
+
+                let will_input = document.createElement("input");
+                will_input.classList.add("will-input");
+                will_input.id = `teacher-will-${teacher_count}`;
+
+                let gender_input = document.createElement("input");
+                gender_input.classList.add("gender-input");
+                gender_input.id = `teacher-gender-${teacher_count}`;
+
+                let age_input = document.createElement("input");
+                age_input.classList.add("age-input");
+                age_input.id = `teacher-age-${teacher_count}`;
+
+                teacher_name_container.appendChild(label);
+                teacher_name_container.appendChild(input);
+
+                teacher_subj_container.appendChild(subj_label);
+                teacher_subj_container.appendChild(subj_input);
+
+                teacher_quali_container.appendChild(quali_label);
+                teacher_quali_container.appendChild(quali_input);
+
+                teacher_will_container.appendChild(will_label);
+                teacher_will_container.appendChild(will_input);
+
+                teacher_gender_container.appendChild(gender_label);
+                teacher_gender_container.appendChild(gender_input);
+
+                teacher_age_container.appendChild(age_label);
+                teacher_age_container.appendChild(age_input);
+
+                teacher_indiv_info.appendChild(teacher_name_container);
+                teacher_indiv_info.appendChild(teacher_subj_container);
+                teacher_indiv_info.appendChild(teacher_quali_container);
+                teacher_indiv_info.appendChild(teacher_will_container);
+                teacher_indiv_info.appendChild(teacher_gender_container);
+                teacher_indiv_info.appendChild(teacher_age_container);
+
+                teachers_info_container.appendChild(teacher_indiv_info);
+
+                input.addEventListener("input", function () {
+                    if (input.value.trim() !== "") {
+                        if (!input.dataset.filled) {
+                            filled++;
+                            input.dataset.filled = "true";
+                        }
+                    } else {
+                        if (input.dataset.filled) {
+                            filled--;
+                            input.dataset.filled = "";
+                        }
+                    }
+                    document.getElementById("top-right-div").textContent = `Filled: ${filled}`;
+                });
+
+                teacher_count++;
+            }
+            let submit = document.createElement("input");
+            submit.type = "submit";
+            submit.value = "Submit";
+            submit.classList.add("submit-button");
+
+            teachers_info_container.appendChild(submit);
+        }
+
+        document.getElementById("teachers-info-con").addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            let schools = JSON.parse(localStorage.getItem("schools")) || [];
+            let index = schools.findIndex(s => s.sch_name === sch_name);
+
+            if (index !== -1) {
+                let teachers = [];
+                let subjects_taught = [];
+                let qualifications = [];
+                let willinness_to_reallocate = [];
+                let gender = [];
+                let age = [];
+
+                document.querySelectorAll(".name-input").forEach(elem => {
+                    teachers.push(elem.value);
+                });
+                document.querySelectorAll(".subj-input").forEach(elem => {
+                    subjects_taught.push(elem.value);
+                });
+                document.querySelectorAll(".quali-input").forEach(elem => {
+                    qualifications.push(elem.value);
+                });
+                document.querySelectorAll(".will-input").forEach(elem => {
+                    willinness_to_reallocate.push(elem.value);
+                });
+                document.querySelectorAll(".gender-input").forEach(elem => {
+                    gender.push(elem.value);
+                });
+                document.querySelectorAll(".age-input").forEach(elem => {
+                    age.push(Number(elem.value));
+                });
+
+                schools[index] = {
+                    ...schools[index],
+                    teachers,
+                    subjects_taught,
+                    qualifications,
+                    willinness_to_reallocate,
+                    gender,
+                    age
+                };
+
+                localStorage.setItem("schools", JSON.stringify(schools));
+                window.location.href = "index.html?updated_school=" + encodeURIComponent(sch_name);
+
+                // ✅ Hide the form
+                document.getElementById("teachers-info-con").style.display = "none";
+                document.getElementById('teacher-heading').innerHTML = `Teacher details of <i style="color: green">${sch_name}</i>`;
+
+                // ✅ Show teacher data
+                const listDiv = document.getElementById("teacher-list");
+                listDiv.innerHTML = ""; // clear previous content
+
+                teachers.forEach((name, i) => {
+                    const card = document.createElement("div");
+                    card.style.border = "1px solid #ccc";
+                    card.style.marginBottom = "10px";
+                    card.style.padding = "10px";
+                    card.style.borderRadius = "5px";
+                    card.style.backgroundColor = "#f9f9f9";
+                    card.style.boxShadow = "0px 2px 6px rgba(0, 0, 0, 0.1)";
+                    card.innerHTML = `
+                <strong>Name:</strong> ${name}<br>
+                <strong>Subject:</strong> ${subjects_taught[i]}<br>
+                <strong>Qualification:</strong> ${qualifications[i]}<br>
+                <strong>Willingness:</strong> ${willinness_to_reallocate[i]}<br>
+                <strong>Gender:</strong> ${gender[i]}<br>
+                <strong>Age:</strong> ${age[i]}
+            `;
+                    listDiv.appendChild(card);
+                });
+
+                // ✅ Optional: Scroll to the list
+                document.getElementById("submitted-teachers").scrollIntoView({ behavior: "smooth" });
+            }
+        });
+    </script>
+</body>
+
+</html>
